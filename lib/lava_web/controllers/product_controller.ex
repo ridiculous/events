@@ -27,7 +27,7 @@ defmodule LavaWeb.ProductController do
   end
 
   def show(conn, %{"id" => id}) do
-    product = Catalog.get_product!(id)
+    product = Catalog.get_product!(id) |> Catalog.inc_page_views()
     render(conn, "show.html", product: product)
   end
 
