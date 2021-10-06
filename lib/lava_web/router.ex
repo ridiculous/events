@@ -20,6 +20,7 @@ defmodule LavaWeb.Router do
     get "/", PageController, :index
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
+    resources "/products", ProductController
   end
 
   # Other scopes may use custom stacks.
