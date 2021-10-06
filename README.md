@@ -12,8 +12,16 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 ## Learn more
   * Update dependencies with `mix deps.update --all`
+  * Show routes with `mix phx.routes`
   * Official website: https://www.phoenixframework.org/
   * Guides: https://hexdocs.pm/phoenix/overview.html
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+
+### Person
+Name
+DOB
+Address
+Contact
