@@ -40,7 +40,9 @@ defmodule Lava.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product!(id), do: Repo.get!(Product, id)
+  def get_product!(id) do
+    Product |> Repo.get!(id) |> Repo.preload(:categories)
+  end
 
   @doc """
   Creates a product.
@@ -56,7 +58,7 @@ defmodule Lava.Catalog do
   """
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> Product.changeset(attrs)
+    |> change_product(attrs)
     |> Repo.insert()
   end
 
@@ -74,7 +76,7 @@ defmodule Lava.Catalog do
   """
   def update_product(%Product{} = product, attrs) do
     product
-    |> Product.changeset(attrs)
+    |> change_product(attrs)
     |> Repo.update()
   end
 
@@ -104,7 +106,11 @@ defmodule Lava.Catalog do
 
   """
   def change_product(%Product{} = product, attrs \\ %{}) do
-    Product.changeset(product, attrs)
+    categories = list_categories_by_id(attrs["category_ids"])
+    product
+    |> Repo.preload(:categories)
+    |> Product.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:categories, categories)
   end
 
   alias Lava.Catalog.Category
@@ -120,6 +126,11 @@ defmodule Lava.Catalog do
   """
   def list_categories do
     Repo.all(Category)
+  end
+
+  def list_categories_by_id(nil), do: []
+  def list_categories_by_id(category_ids) do
+    Repo.all(from c in Category, where: c.id in ^category_ids)
   end
 
   @doc """

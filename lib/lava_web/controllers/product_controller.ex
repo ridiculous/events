@@ -33,7 +33,7 @@ defmodule LavaWeb.ProductController do
 
   def edit(conn, %{"id" => id}) do
     product = Catalog.get_product!(id)
-    changeset = Catalog.change_product(product)
+    changeset = Catalog.change_product(product, %{"category_ids" => product.categories |> Enum.map(& &1.id)})
     render(conn, "edit.html", product: product, changeset: changeset)
   end
 
