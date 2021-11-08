@@ -8,7 +8,7 @@ defmodule Lava.Repo.Migrations.CreateEvents do
       add :source_id, :integer
       add :source_type, :string
       add :name, :string
-      add :value, :string
+      add :value, :text
       add :created_by, :integer
       add :updated_by, :integer
 

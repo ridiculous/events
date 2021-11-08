@@ -10,7 +10,7 @@ defmodule Lava.Events.Event do
     field :updated_by, :integer
     field :created_by, :integer
     field :name, :string
-    field :value, :text
+    field :value, :string
     timestamps()
   end
 
