@@ -4,8 +4,8 @@ defmodule Lava.Repo.Migrations.CreateEvents do
   def change do
     create table(:events) do
       add :type, :string
-      add :event_id, references(:events)
-      add :source_event_id, references(:events)
+      add :event_id, references(:events, on_delete: :nilify_all)
+      add :source_event_id, references(:events, on_delete: :nilify_all)
       add :source_type, :string
       add :name, :string
       add :value, :text
@@ -14,5 +14,8 @@ defmodule Lava.Repo.Migrations.CreateEvents do
 
       timestamps()
     end
+
+    create unique_index(:events, [:source_event_id, :name])
+    create index(:events, [:event_id, :name])
   end
 end

@@ -7,6 +7,8 @@ defmodule Lava.Events do
   alias Lava.Repo
 
   alias Lava.Events.Event
+  alias Lava.Events.Attr
+  alias Lava.Events.Hooks
 
   @doc """
   Returns the list of events.
@@ -72,6 +74,42 @@ defmodule Lava.Events do
   defp build_event(attrs) do
     %Event{type: "#{attrs.__struct__}"}
     |> Event.changeset(Map.from_struct(attrs))
+  end
+
+  def create(attrs = %{}) do
+    create_event(attrs)
+    |> create_extras(attrs)
+    |> run_hooks(attrs)
+  end
+
+  def create(attrs = %{}, source = %Event{}) do
+    create_event(attrs, source)
+    |> create_extras(attrs)
+    |> run_hooks(attrs)
+  end
+
+  def create(attrs = %{}, source = %Event{}, event = %Event{}) do
+    create_event(attrs, source, event)
+    |> create_extras(attrs)
+    |> run_hooks(attrs)
+  end
+
+  defp create_extras({:ok, parent}, attrs) do
+    extras = Map.from_struct(attrs)
+             |> Map.drop([:name, :value])
+    for {name, value} <- extras do
+      {:ok, _} = create_event(%Attr{name: "#{name}", value: "#{value}"}, parent)
+    end
+    parent
+  end
+
+  defp create_extras({:error, message}, _) do
+    raise "Failed to create event #{message}"
+  end
+
+  def run_hooks(event, attrs) do
+    Hooks.event_created(attrs)
+    event
   end
 
   @doc """
