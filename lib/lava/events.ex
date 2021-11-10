@@ -35,7 +35,7 @@ defmodule Lava.Events do
       ** (Ecto.NoResultsError)
 
   """
-  def get_event!(id), do: Repo.get!(Event, id)
+  def get_event!(id), do: Repo.get!(Event, id) |> Repo.preload(:events)
 
   @doc """
   Creates a event.
@@ -49,10 +49,29 @@ defmodule Lava.Events do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event(attrs \\ %{}) do
-    %Event{}
-    |> Event.changeset(attrs)
+  def create_event(attrs = %{}) do
+    build_event(attrs)
     |> Repo.insert()
+  end
+
+  # Create and link
+  def create_event(attrs = %{}, source_event = %Event{}) do
+    build_event(attrs)
+    |> Ecto.Changeset.put_assoc(:source_event, source_event)
+    |> Repo.insert()
+  end
+
+  # Create and double-link
+  def create_event(attrs = %{}, source_event = %Event{}, event = %Event{}) do
+    build_event(attrs)
+    |> Ecto.Changeset.put_assoc(:source_event, source_event)
+    |> Ecto.Changeset.put_assoc(:event, event)
+    |> Repo.insert()
+  end
+
+  defp build_event(attrs) do
+    %Event{type: "#{attrs.__struct__}"}
+    |> Event.changeset(Map.from_struct(attrs))
   end
 
   @doc """

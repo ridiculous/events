@@ -4,20 +4,23 @@ defmodule Lava.Events.Event do
 
   schema "events" do
     field :type, :string
-    field :incident_id, :integer
-    field :source_id, :integer
     field :source_type, :string
     field :updated_by, :integer
     field :created_by, :integer
     field :name, :string
     field :value, :string
     timestamps()
+
+    belongs_to :event, Lava.Events.Event
+    belongs_to :source_event, Lava.Events.Event
+    has_many :events, Lava.Events.Event
+    has_many :source_events, Lava.Events.Event, foreign_key: :source_event_id
   end
 
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:type, :incident_id, :source_id, :source_type, :name, :value, :created_by, :updated_by])
-    |> validate_required([:type, :incident_id, :source_id, :source_type, :name, :value, :created_by, :updated_by])
+    |> cast(attrs, [:type, :source_type, :name, :value, :created_by, :updated_by])
+#    |> validate_required([:type, :incident_id, :event_id, :source_type, :name, :value, :created_by, :updated_by])
   end
 end

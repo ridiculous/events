@@ -4,8 +4,8 @@ defmodule Lava.Repo.Migrations.CreateEvents do
   def change do
     create table(:events) do
       add :type, :string
-      add :incident_id, :integer
-      add :source_id, :integer
+      add :event_id, references(:events)
+      add :source_event_id, references(:events)
       add :source_type, :string
       add :name, :string
       add :value, :text
