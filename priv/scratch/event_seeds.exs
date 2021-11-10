@@ -1,13 +1,4 @@
-#= DESCRIPTION
-# Everything is an event, which is a record that stores primarily a key and a value
-# All keys and values are strings
-# Events can have many other events related to it, or nested under it
-# Events are Elixir Structs, which can implement the hook protocol to modify behavior after create/update/delete
-
-# The idea is this simple system design can be applied to create all the data structures we need, and also be used to source the state of the system
-# Which means recreate the system from scratch by replaying the event log (aka event-sourced design).
-
-# Create an event with an outgoing call attributes and have it stored as an event
+# Create and link events representing an incident
 
 alias Lava.Events
 

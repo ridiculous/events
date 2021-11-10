@@ -1,6 +1,18 @@
 defmodule Lava.Events do
   @moduledoc """
-  The Events context.
+  Everything is an event, which is primarily a key and a value store
+  All keys and values are strings
+  Events can have many other events related to it, or nested under it
+  Events are Structs, which can implement the hook protocol to modify behavior after create/update/delete
+  The idea is this simple system design can be applied to run much of an evented system, and also be used to source the state of the system (aka event-sourced design).
+
+  ## Usage
+  Utilize this module in your system by defining your own structs to represent activities and entities in your system, and pass them
+  to the create_event function, with data in the format of either a simple key/value pair or a custom map, which will be broken down into key/value pairs
+  and saved as nested events.
+
+  ## Protocol
+  Hook into the creation of events by defining the Lava.Events.Hooks protocol for the target structs
   """
 
   import Ecto.Query, warn: false
@@ -10,63 +22,48 @@ defmodule Lava.Events do
   alias Lava.Events.Attr
   alias Lava.Events.Hooks
 
-  @doc """
-  Returns the list of events.
+  def get_event!(id),
+      do: Repo.get!(Event, id)
+          |> Repo.preload(:source_events)
 
-  ## Examples
-
-      iex> list_events()
-      [%Event{}, ...]
-
-  """
-  def list_events do
-    Repo.all(Event)
+  def create(attrs = %{}) do
+    create_event(attrs)
+    |> create_extras(attrs)
   end
 
-  @doc """
-  Gets a single event.
+  def create(attrs = %{}, source = %Event{}) do
+    create_event(attrs, source)
+    |> create_extras(attrs)
+  end
 
-  Raises `Ecto.NoResultsError` if the Event does not exist.
+  def create(attrs = %{}, source = %Event{}, event = %Event{}) do
+    create_event(attrs, source, event)
+    |> create_extras(attrs)
+  end
 
-  ## Examples
+  # Protected.
 
-      iex> get_event!(123)
-      %Event{}
-
-      iex> get_event!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_event!(id), do: Repo.get!(Event, id) |> Repo.preload(:events)
-
-  @doc """
-  Creates a event.
-
-  ## Examples
-
-      iex> create_event(%{field: value})
-      {:ok, %Event{}}
-
-      iex> create_event(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_event(attrs = %{}) do
+  defp create_event(attrs = %{}) do
     build_event(attrs)
     |> Repo.insert()
     |> run_hooks(attrs)
   end
 
   # Create and link
-  def create_event(attrs = %{}, source_event = %Event{}) do
+  defp create_event(attrs = %{}, source_event = %Event{}) do
     build_event(attrs)
     |> Ecto.Changeset.put_assoc(:source_event, source_event)
     |> Repo.insert()
     |> run_hooks(attrs)
   end
 
+  # Create and link a nested attr event
+  defp create_event({key, val}, source = %Event{}) do
+    create_event(%Attr{name: "#{key}", value: "#{val}"}, source)
+  end
+
   # Create and double-link
-  def create_event(attrs = %{}, source_event = %Event{}, event = %Event{}) do
+  defp create_event(attrs = %{}, source_event = %Event{}, event = %Event{}) do
     build_event(attrs)
     |> Ecto.Changeset.put_assoc(:source_event, source_event)
     |> Ecto.Changeset.put_assoc(:event, event)
@@ -79,24 +76,12 @@ defmodule Lava.Events do
     |> Event.changeset(Map.from_struct(attrs))
   end
 
-  def create(attrs = %{}) do
-    create_event(attrs) |> create_extras(attrs)
-  end
-
-  def create(attrs = %{}, source = %Event{}) do
-    create_event(attrs, source) |> create_extras(attrs)
-  end
-
-  def create(attrs = %{}, source = %Event{}, event = %Event{}) do
-    create_event(attrs, source, event) |> create_extras(attrs)
-  end
-
   defp create_extras({:ok, parent}, attrs) do
     # Drop these attrs cause they should've already been saved to the parent, so maybe can skip creating extras
     extras = Map.from_struct(attrs)
-             |> Map.drop([:name, :value])
+             |> Map.drop(Map.keys(parent))
     for {name, value} <- extras do
-      {:ok, _} = create_event(%Attr{name: "#{name}", value: "#{value}"}, parent)
+      {:ok, _} = create_event({name, value}, parent)
     end
     parent
   end
@@ -107,55 +92,7 @@ defmodule Lava.Events do
 
   defp run_hooks({:ok, event}, attrs) do
     Hooks.event_created(attrs, event)
-    {:ok, event}
   end
 
   defp run_hooks(result, _), do: result
-
-  @doc """
-  Updates a event.
-
-  ## Examples
-
-      iex> update_event(event, %{field: new_value})
-      {:ok, %Event{}}
-
-      iex> update_event(event, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_event(%Event{} = event, attrs) do
-    event
-    |> Event.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a event.
-
-  ## Examples
-
-      iex> delete_event(event)
-      {:ok, %Event{}}
-
-      iex> delete_event(event)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_event(%Event{} = event) do
-    Repo.delete(event)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking event changes.
-
-  ## Examples
-
-      iex> change_event(event)
-      %Ecto.Changeset{data: %Event{}}
-
-  """
-  def change_event(%Event{} = event, attrs \\ %{}) do
-    Event.changeset(event, attrs)
-  end
 end

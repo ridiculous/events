@@ -21,6 +21,5 @@ defmodule Lava.Events.Event do
   def changeset(event, attrs) do
     event
     |> cast(attrs, [:type, :source_type, :name, :value, :created_by, :updated_by])
-#    |> validate_required([:type, :incident_id, :event_id, :source_type, :name, :value, :created_by, :updated_by])
   end
 end
