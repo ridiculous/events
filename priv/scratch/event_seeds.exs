@@ -22,10 +22,11 @@ outgoing = Events.create(
   %Lava.Activities.OutgoingCall{to: "+14152604528", notes: "Notes go here", date: DateTime.utc_now()},
   incident
 )
-outgoing2 = Events.create(
-  %Lava.Activities.OutgoingCall{to: "+19256407065", notes: "Called by baby boo", date: DateTime.utc_now()},
-  incident
-)
+
+#outgoing2 = Events.create(
+#  %Lava.Activities.OutgoingCall{to: "+19256407065", notes: "Called by baby boo", date: DateTime.utc_now()},
+#  incident
+#)
 
 
 #= Summary

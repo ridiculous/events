@@ -54,6 +54,7 @@ defmodule Lava.Events do
   def create_event(attrs = %{}) do
     build_event(attrs)
     |> Repo.insert()
+    |> run_hooks(attrs)
   end
 
   # Create and link
@@ -61,6 +62,7 @@ defmodule Lava.Events do
     build_event(attrs)
     |> Ecto.Changeset.put_assoc(:source_event, source_event)
     |> Repo.insert()
+    |> run_hooks(attrs)
   end
 
   # Create and double-link
@@ -69,6 +71,7 @@ defmodule Lava.Events do
     |> Ecto.Changeset.put_assoc(:source_event, source_event)
     |> Ecto.Changeset.put_assoc(:event, event)
     |> Repo.insert()
+    |> run_hooks(attrs)
   end
 
   defp build_event(attrs) do
@@ -77,24 +80,19 @@ defmodule Lava.Events do
   end
 
   def create(attrs = %{}) do
-    create_event(attrs)
-    |> create_extras(attrs)
-    |> run_hooks(attrs)
+    create_event(attrs) |> create_extras(attrs)
   end
 
   def create(attrs = %{}, source = %Event{}) do
-    create_event(attrs, source)
-    |> create_extras(attrs)
-    |> run_hooks(attrs)
+    create_event(attrs, source) |> create_extras(attrs)
   end
 
   def create(attrs = %{}, source = %Event{}, event = %Event{}) do
-    create_event(attrs, source, event)
-    |> create_extras(attrs)
-    |> run_hooks(attrs)
+    create_event(attrs, source, event) |> create_extras(attrs)
   end
 
   defp create_extras({:ok, parent}, attrs) do
+    # Drop these attrs cause they should've already been saved to the parent, so maybe can skip creating extras
     extras = Map.from_struct(attrs)
              |> Map.drop([:name, :value])
     for {name, value} <- extras do
@@ -107,10 +105,12 @@ defmodule Lava.Events do
     raise "Failed to create event #{message}"
   end
 
-  def run_hooks(event, attrs) do
-    Hooks.event_created(attrs)
-    event
+  defp run_hooks({:ok, event}, attrs) do
+    Hooks.event_created(attrs, event)
+    {:ok, event}
   end
+
+  defp run_hooks(result, _), do: result
 
   @doc """
   Updates a event.
