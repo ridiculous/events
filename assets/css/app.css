@@ -1,10 +1,50 @@
 /* This file is for your main application CSS */
 /*@import "./phoenix.css";*/
 @tailwind base;
-
 @tailwind components;
-
 @tailwind utilities;
+
+body {
+  @apply bg-gray-200;
+  padding: 50px;
+}
+
+nav li {
+  display: inline-block;
+  margin: 5px;
+}
+nav li a {
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.container {
+  margin: auto;
+}
+
+.inner-content {
+  margin: 20px 5px;
+}
+
+h1 {
+  font-size: 20px;
+  line-height: 30px;
+  margin: 10px;
+}
+
+.event-bubble {
+  padding: 10px 0;
+}
+
+.event-bubble a {
+  padding: 10px;
+  border-radius: 5px;
+  @apply bg-blue-200 border border-blue-600;
+}
+
+header {
+  margin-bottom: 20px;
+}
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;

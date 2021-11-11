@@ -72,13 +72,19 @@ defmodule Lava.Events do
   end
 
   defp build_event(attrs) do
-    %Event{type: "#{attrs.__struct__}"}
-    |> Event.changeset(Map.from_struct(attrs))
+    %Event{type: "#{infer_type(attrs)}"}
+    |> Event.changeset(get_attrs(attrs))
   end
 
+  defp infer_type(%{:__struct__ => type}), do: type
+  defp infer_type(%{:type => type}), do: type
+  defp infer_type(%{"type" => type}), do: type
+  defp infer_type(%{}), do: raise("Type of event couldn't be determined. Use a named Struct or pass :type")
+
+  defp create_extras({:error, changeset}, _), do: {:error, changeset}
   defp create_extras({:ok, parent}, attrs) do
     # Drop these attrs cause they should've already been saved to the parent, so maybe can skip creating extras
-    extras = Map.from_struct(attrs)
+    extras = get_attrs(attrs)
              |> Map.drop(Map.keys(parent))
     for {name, value} <- extras do
       {:ok, _} = create_event({name, value}, parent)
@@ -86,8 +92,17 @@ defmodule Lava.Events do
     parent
   end
 
-  defp create_extras({:error, message}, _) do
-    raise "Failed to create event #{message}"
+  defp get_attrs(attrs) when is_struct(attrs) do
+    Map.from_struct(attrs)
+  end
+
+  defp get_attrs(attrs) when is_map(attrs) do
+    for {key, val} <- attrs, into: %{}, do: {get_attr_key(key), val}
+  end
+
+  defp get_attr_key(key) when is_atom(key), do: key
+  defp get_attr_key(key) when is_binary(key) do
+    String.to_atom(key)
   end
 
   defp run_hooks({:ok, event}, attrs) do
