@@ -15,6 +15,9 @@
         <nav>
           <ul>
             <li><%= link "Home", to: "/" %></li>
+            <%= for event <- Lava.Events.get_parents(assigns[:event], []) do %>
+            <li><%= link "#{LavaWeb.EventsView.type(event.type)} #{event.id}", to: Routes.events_path(@conn, :show, event.id) %></li>
+            <% end %>
             <li><%= link "New Event", to: Routes.events_path(@conn, :new) %></li>
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li class="float-right"><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>

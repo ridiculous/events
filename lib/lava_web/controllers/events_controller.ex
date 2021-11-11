@@ -45,7 +45,7 @@ defmodule LavaWeb.EventsController do
 
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-    render(conn, "show.html", events: [event] ++ event.source_events)
+    render(conn, "show.html", event: event, events: [event] ++ event.source_events)
   end
 
   defp parse_type(%{"event" => %{"type" => type}}), do: String.to_existing_atom("Elixir.Lava.#{type}")
