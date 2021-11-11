@@ -1,12 +1,5 @@
 <%= for event <- @events do %>
 <%= link to: Routes.events_path(@conn, :show, event.id) do %>
-<div class="event-bubble">
-<span class="event-title"><%= "#{LavaWeb.EventsView.type(event.type)} #{event.id}" %></span>
-<span class="event-detail">[<%= "#{event.name}: \"#{event.value}\"" %>]</span><br/>
-<div class="event-detail">
-<span>Created: <%= event.created_by %></span>
-<span>Updated: <%= Calendar.strftime(event.updated_at, "%I:%M:%S") %></span>
-</div>
-</div>
+<%= render "event.html", Map.put(assigns, :event, event) %>
 <% end %>
 <% end %>

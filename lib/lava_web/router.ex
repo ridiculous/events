@@ -20,6 +20,9 @@ defmodule LavaWeb.Router do
     pipe_through :browser
 
     get "/", EventsController, :index
+    get "/events", EventsController, :index
+    get "/events/new", EventsController, :new
+    post "/events/create", EventsController, :create
     post "/events/create_incident", EventsController, :create_incident
     get "/events/:id", EventsController, :show
     get "/hello", HelloController, :index

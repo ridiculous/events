@@ -1,0 +1,6 @@
+<div class="event-bubble">
+<span class="event-title"><%= "#{LavaWeb.EventsView.type(@event.type)} #{@event.id}" %></span>
+<%= if @event.name do %>
+<span class="event-detail">[<%= "#{@event.name}: \"#{@event.value}\"" %>]</span>
+<% end %>
+</div>

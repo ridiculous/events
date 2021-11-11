@@ -47,6 +47,26 @@ h1 {
 header {
   margin-bottom: 20px;
 }
+
+button[type=submit] {
+  padding: 5px 15px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 10px;
+  background: green;
+  color: white;
+}
+
+input[type=text],
+select {
+  padding: 5px;
+  margin: 0 5px;
+  border-radius: 5px;
+}
+
+.fields {
+  display: inline-block;
+}
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;

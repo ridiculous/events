@@ -20,6 +20,6 @@ defmodule Lava.Events.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:type, :source_type, :name, :value, :created_by, :updated_by])
+    |> cast(attrs, [:name, :value, :created_by, :updated_by])
   end
 end
