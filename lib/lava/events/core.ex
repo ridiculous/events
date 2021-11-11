@@ -26,12 +26,12 @@ defmodule Lava.Events.Core do
       end
 
       def create(type, attrs = %{}, source = %Event{}) do
-        create_event(attrs, source)
+        create_event(type, attrs, source)
         |> create_attrs(params_for_type(type, attrs))
       end
 
       def create(type, attrs = %{}, source = %Event{}, event = %Event{}) do
-        create_event(attrs, source, event)
+        create_event(type, attrs, source, event)
         |> create_attrs(params_for_type(type, attrs))
       end
 
@@ -57,12 +57,12 @@ defmodule Lava.Events.Core do
       end
 
       # Create and double-link
-      #  defp create_event(type, attrs = %{}, source_event = %Event{}, event = %Event{}) do
-      #    build_event(type, attrs)
-      #    |> Ecto.Changeset.put_assoc(:source_event, source_event)
-      #    |> Ecto.Changeset.put_assoc(:event, event)
-      #    |> Repo.insert()
-      #  end
+      defp create_event(type, attrs = %{}, source_event = %Event{}, event = %Event{}) do
+        build_event(type, attrs)
+        |> Ecto.Changeset.put_assoc(:source_event, source_event)
+        |> Ecto.Changeset.put_assoc(:event, event)
+        |> Repo.insert()
+      end
 
       defp build_event(type, attrs) do
         %Event{type: "#{type}"}

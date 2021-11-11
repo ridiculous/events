@@ -40,6 +40,14 @@ h1 {
   @apply bg-blue-200 border border-blue-600;
 }
 
+.first-item {
+  display: inline-block;
+}
+
+.first-item .event-bubble {
+  @apply bg-blue-100
+}
+
 .event-bubble a {
   padding: 10px;
 }

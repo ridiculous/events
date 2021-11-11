@@ -6,6 +6,9 @@
   <% end %>
 
  <div class="fields">
+    <%= if @event do %>
+    <%= hidden_input f, :source_event_id, value: @event.id %>
+    <% end %>
    <%= select f, :type, LavaWeb.EventsView.types %>
    <%= error_tag f, :name %>
 

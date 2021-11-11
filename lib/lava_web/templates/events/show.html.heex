@@ -1,3 +1,8 @@
+<div class="first-item">
+<%= link to: Routes.events_path(@conn, :show, @event.id) do %>
+<%= render "event.html", %{event: @event} %>
+<% end %>
+</div>
 <%= for event <- @events do %>
 <%= link to: Routes.events_path(@conn, :show, event.id) do %>
 <%= render "event.html", Map.put(assigns, :event, event) %>

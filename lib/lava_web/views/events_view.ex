@@ -1,10 +1,18 @@
 defmodule LavaWeb.EventsView do
   use LavaWeb, :view
 
-  @types [Lava.Entities.Incident, Lava.Entities.Person, Lava.Activities.AddAllegedVictim, Lava.Activities.OutgoingCall]
+  @types [
+    Lava.Entities.Incident,
+    Lava.Entities.Person,
+    Lava.Activities.AddAllegedVictim,
+    Lava.Activities.OutgoingCall,
+    Lava.Events.Attr
+  ]
 
   def type(t) do
-    String.split(t, ".") |> Enum.drop(2) |> Enum.join(".")
+    String.split(t, ".")
+    |> Enum.drop(2)
+    |> Enum.join(".")
   end
 
   def types do

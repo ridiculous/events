@@ -9,15 +9,23 @@ defmodule LavaWeb.EventsController do
   end
 
   def new(conn, params) do
-    render(conn, "new.html", changeset: Events.change_event(%Event{}))
+    event = case params do
+      %{"event_id" => ""} -> nil
+      %{"event_id" => id} -> Events.get_event!(id)
+      %{} -> nil
+    end
+    render(conn, "new.html", changeset: Events.change_event(%Event{}), event: event)
   end
 
   def create(conn, params) do
-    event = Events.create(parse_type(params), params["event"])
+    event = case params["event"] do
+      %{"source_event_id" => id} -> Events.create(parse_type(params), params["event"], Events.get_event!(id))
+      _ -> Events.create(parse_type(params), params["event"])
+    end
     case event do
       %Event{} -> conn
                   |> put_flash(:info, "Event #{event.id} created successfully.")
-                  |> redirect(to: "/")
+                  |> redirect(to: "/events/#{params["event"]["source_event_id"]}")
       {:error, %Ecto.Changeset{} = changeset} -> conn
                                                  |> put_flash(
                                                       :error,
@@ -27,28 +35,19 @@ defmodule LavaWeb.EventsController do
     end
   end
 
-  def create_incident(conn, params) do
-    event = Events.create(Incident, params)
-    case event do
-      %Event{} -> conn
-                  |> put_flash(:info, "Event #{event.id} created successfully.")
-                  |> redirect(to: "/")
-      {:error, %Ecto.Changeset{} = changeset} -> conn
-                                                 |> put_flash(
-                                                      :error,
-                                                      "Poop, it failed. #{inspect(changeset.errors)}"
-                                                    )
-                                                 |> redirect(to: "/")
-    end
-
-  end
-
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-    render(conn, "show.html", event: event, events: [event] ++ event.source_events)
+            |> Lava.Repo.preload(:source_events)
+    render(conn, "show.html", event: event, events: event.source_events)
   end
 
-  defp parse_type(%{"event" => %{"type" => type}}), do: String.to_existing_atom("Elixir.Lava.#{type}")
+  defp parse_type(
+         %{
+           "event" => %{
+             "type" => type
+           }
+         }
+       ), do: String.to_existing_atom("Elixir.Lava.#{type}")
 
   #  def index(conn) do
   #
