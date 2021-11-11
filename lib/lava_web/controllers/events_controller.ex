@@ -8,13 +8,17 @@ defmodule LavaWeb.EventsController do
   end
 
   def create_incident(conn, params) do
-    event = Events.create(%Lava.Entities.Incident{})
+    type = parse_struct(params)
+    event = Events.create(type, params)
     case event do
       %Event{} -> conn
                   |> put_flash(:info, "Event #{event.id} created successfully.")
                   |> redirect(to: "/")
       {:error, %Ecto.Changeset{} = changeset} -> conn
-                                                 |> put_flash(:error, "Poopsies, it failed. #{inspect(changeset.errors)}")
+                                                 |> put_flash(
+                                                      :error,
+                                                      "Poopsies, it failed. #{inspect(changeset.errors)}"
+                                                    )
                                                  |> redirect(to: "/")
     end
 
@@ -24,6 +28,8 @@ defmodule LavaWeb.EventsController do
     event = Events.get_event!(id)
     render(conn, "show.html", events: [event] ++ event.source_events)
   end
+
+  defp parse_struct(%{"type" => type}), do: String.to_existing_atom("Elixir.Lava.#{type}")
 
   #  def index(conn) do
   #

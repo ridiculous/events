@@ -31,6 +31,11 @@ defmodule Lava.Events do
     |> create_extras(attrs)
   end
 
+  def create(type, attrs = %{}) do
+    args = type_params(type, attrs)
+    params = struct(type, args)
+  end
+
   def create(attrs = %{}, source = %Event{}) do
     create_event(attrs, source)
     |> create_extras(attrs)
@@ -42,6 +47,11 @@ defmodule Lava.Events do
   end
 
   # Protected.
+
+  defp type_params(type, params) do
+    keys = Map.keys(struct(type)) |> List.delete(:__struct__) |> Enum.map(fn key -> Atom.to_string(key) end)
+    Map.take(params, keys)
+  end
 
   defp create_event(attrs = %{}) do
     build_event(attrs)
@@ -78,7 +88,7 @@ defmodule Lava.Events do
 
   defp infer_type(%{:__struct__ => type}), do: type
   defp infer_type(%{:type => type}), do: type
-  defp infer_type(%{"type" => type}), do: type
+  defp infer_type(%{"type" => type}), do: String.to_existing_atom("Elixir.Lava.#{type}")
   defp infer_type(%{}), do: raise("Type of event couldn't be determined. Use a named Struct or pass :type")
 
   defp create_extras({:error, changeset}, _), do: {:error, changeset}
