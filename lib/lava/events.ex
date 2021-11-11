@@ -12,4 +12,10 @@ defmodule Lava.Events do
   def change_event(%Event{} = event, attrs \\ %{}) do
     Event.changeset(event, attrs)
   end
+
+  def get_parents(event = %Event{}, list) do
+    parent = Repo.preload(event, :source_event)
+    get_parents(parent.source_event, [parent] ++ list)
+  end
+  def get_parents(nil, list), do: list
 end
