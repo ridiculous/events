@@ -1,8 +1,12 @@
 <%= for event <- @events do %>
-<div class="event-bubble">
 <%= link to: Routes.events_path(@conn, :show, event.id) do %>
+<div class="event-bubble">
 <span class="event-title"><%= "#{LavaWeb.EventsView.type(event.type)} #{event.id}" %></span>
-<span class="event-detail">[<%= "#{event.name}: \"#{event.value}\"" %>]</span>
-<% end %>
+<span class="event-detail">[<%= "#{event.name}: \"#{event.value}\"" %>]</span><br/>
+<div class="event-detail">
+<span>Created: <%= event.created_by %></span>
+<span>Updated: <%= Calendar.strftime(event.updated_at, "%I:%M:%S") %></span>
 </div>
+</div>
+<% end %>
 <% end %>

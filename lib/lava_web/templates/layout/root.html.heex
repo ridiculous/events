@@ -15,7 +15,7 @@
         <nav>
           <ul>
             <li><%= link "Home", to: "/" %></li>
-            <li><%= link "New Incident Report", method: :post, to: Routes.events_path(@conn, :create_incident, type: "Entities.Person", name: "state", value: "complete") %></li>
+            <li><%= link "New Incident Report", method: :post, to: Routes.events_path(@conn, :create_incident, name: "state", value: "wip", created_by: 2, av: "Abe") %></li>
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li class="float-right"><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>

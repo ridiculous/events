@@ -2,11 +2,11 @@
 
 <div class="">
 <%= for event <- @events do %>
-<div class="event-bubble">
 <%= link to: Routes.events_path(@conn, :show, event.id) do %>
+<div class="event-bubble">
 <span class="event-title"><%= "#{LavaWeb.EventsView.type(event.type)} #{event.id}" %></span>
 <span class="event-detail">[<%= "#{event.name}: \"#{event.value}\"" %>]</span>
-<% end %>
 </div>
+<% end %>
 <% end %>
 </div>

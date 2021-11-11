@@ -10,9 +10,6 @@ defmodule Lava.Events do
   Utilize this module in your system by defining your own structs to represent activities and entities in your system, and pass them
   to the create_event function, with data in the format of either a simple key/value pair or a custom map, which will be broken down into key/value pairs
   and saved as nested events.
-
-  ## Protocol
-  Hook into the creation of events by defining the Lava.Events.Hooks protocol for the target structs
   """
 
   import Ecto.Query, warn: false
@@ -20,104 +17,67 @@ defmodule Lava.Events do
 
   alias Lava.Events.Event
   alias Lava.Events.Attr
-  alias Lava.Events.Hooks
 
   def get_event!(id),
       do: Repo.get!(Event, id)
           |> Repo.preload(:source_events)
 
-  def create(attrs = %{}) do
-    create_event(attrs)
-    |> create_extras(attrs)
-  end
-
+  # Take the given params and create an event with them.
+  # Using the remaining params, check if any are defined on the given Type, and use those to create subsequent events
   def create(type, attrs = %{}) do
-    args = type_params(type, attrs)
-    params = struct(type, args)
+    create_event(type, attrs)
+    |> create_extras(params_for_type(type, attrs))
   end
 
-  def create(attrs = %{}, source = %Event{}) do
+  def create(type, attrs = %{}, source = %Event{}) do
     create_event(attrs, source)
-    |> create_extras(attrs)
+    |> create_extras(params_for_type(type, attrs))
   end
 
-  def create(attrs = %{}, source = %Event{}, event = %Event{}) do
+  def create(type, attrs = %{}, source = %Event{}, event = %Event{}) do
     create_event(attrs, source, event)
-    |> create_extras(attrs)
+    |> create_extras(params_for_type(type, attrs))
   end
 
   # Protected.
 
-  defp type_params(type, params) do
-    keys = Map.keys(struct(type)) |> List.delete(:__struct__) |> Enum.map(fn key -> Atom.to_string(key) end)
+  defp params_for_type(type, params) do
+    keys = Map.keys(struct(type))
+           |> List.delete(:__struct__)
+           |> Enum.map(fn key -> Atom.to_string(key) end)
     Map.take(params, keys)
   end
 
-  defp create_event(attrs = %{}) do
-    build_event(attrs)
+  defp create_event(type, attrs = %{}) do
+    build_event(type, attrs)
     |> Repo.insert()
-    |> run_hooks(attrs)
   end
 
   # Create and link
-  defp create_event(attrs = %{}, source_event = %Event{}) do
-    build_event(attrs)
+  defp create_event(type, attrs = %{}, source_event = %Event{}) do
+    build_event(type, attrs)
     |> Ecto.Changeset.put_assoc(:source_event, source_event)
     |> Repo.insert()
-    |> run_hooks(attrs)
-  end
-
-  # Create and link a nested attr event
-  defp create_event({key, val}, source = %Event{}) do
-    create_event(%Attr{name: "#{key}", value: "#{val}"}, source)
   end
 
   # Create and double-link
-  defp create_event(attrs = %{}, source_event = %Event{}, event = %Event{}) do
-    build_event(attrs)
+  defp create_event(type, attrs = %{}, source_event = %Event{}, event = %Event{}) do
+    build_event(type, attrs)
     |> Ecto.Changeset.put_assoc(:source_event, source_event)
     |> Ecto.Changeset.put_assoc(:event, event)
     |> Repo.insert()
-    |> run_hooks(attrs)
   end
 
-  defp build_event(attrs) do
-    %Event{type: "#{infer_type(attrs)}"}
-    |> Event.changeset(get_attrs(attrs))
+  defp build_event(type, attrs) do
+    %Event{type: "#{type}"}
+    |> Event.changeset(attrs)
   end
-
-  defp infer_type(%{:__struct__ => type}), do: type
-  defp infer_type(%{:type => type}), do: type
-  defp infer_type(%{"type" => type}), do: String.to_existing_atom("Elixir.Lava.#{type}")
-  defp infer_type(%{}), do: raise("Type of event couldn't be determined. Use a named Struct or pass :type")
 
   defp create_extras({:error, changeset}, _), do: {:error, changeset}
   defp create_extras({:ok, parent}, attrs) do
-    # Drop these attrs cause they should've already been saved to the parent, so maybe can skip creating extras
-    extras = get_attrs(attrs)
-             |> Map.drop(Map.keys(parent))
-    for {name, value} <- extras do
-      {:ok, _} = create_event({name, value}, parent)
+    for {name, value} <- attrs do
+      {:ok, _} = create_event(Attr, %{name: "#{name}", value: "#{value}"}, parent)
     end
     parent
   end
-
-  defp get_attrs(attrs) when is_struct(attrs) do
-    Map.from_struct(attrs)
-  end
-
-  defp get_attrs(attrs) when is_map(attrs) do
-    for {key, val} <- attrs, into: %{}, do: {get_attr_key(key), val}
-  end
-
-  defp get_attr_key(key) when is_atom(key), do: key
-  defp get_attr_key(key) when is_binary(key) do
-    String.to_atom(key)
-  end
-
-  defp run_hooks({:ok, event}, attrs) do
-    Hooks.event_created(attrs, event)
-  end
-
-  defp run_hooks(result, _), do: result
 end

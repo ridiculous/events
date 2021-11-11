@@ -33,13 +33,15 @@ h1 {
 }
 
 .event-bubble {
-  padding: 10px 0;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  @apply bg-blue-200 border border-blue-600;
 }
 
 .event-bubble a {
   padding: 10px;
-  border-radius: 5px;
-  @apply bg-blue-200 border border-blue-600;
 }
 
 header {
