@@ -37,7 +37,7 @@ h1 {
   padding: 10px;
   border-radius: 5px;
   display: inline-block;
-  @apply bg-blue-200 border border-blue-600;
+  @apply bg-blue-100 border border-blue-500;
 }
 
 .first-item {
@@ -45,7 +45,7 @@ h1 {
 }
 
 .first-item .event-bubble {
-  @apply bg-blue-100
+  @apply bg-blue-200
 }
 
 .event-bubble a {
