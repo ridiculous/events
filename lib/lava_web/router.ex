@@ -16,15 +16,13 @@ defmodule LavaWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :events_explorer do
+    plug :put_root_layout, {LavaWeb.LayoutView, :events_explorer}
+  end
+
   scope "/", LavaWeb do
     pipe_through :browser
-
-    get "/", EventsController, :index
-    get "/events", EventsController, :index
-    get "/events/new", EventsController, :new
-    post "/events/create", EventsController, :create
-    post "/events/create_incident", EventsController, :create_incident
-    get "/events/:id", EventsController, :show
+    resources "/incidents", IncidentsController
     get "/hello", HelloController, :index
     get "/hello/:messenger", HelloController, :show
     resources "/products", ProductController
@@ -32,6 +30,11 @@ defmodule LavaWeb.Router do
     get "/cart", CartController, :show
     put "/cart", CartController, :update
     resources "/orders", OrderController, only: [:create, :show]
+    scope "/events" do
+      pipe_through :events_explorer
+      resources "/", EventsController
+    end
+    get "/", IncidentsController, :index
   end
 
   # Other scopes may use custom stacks.

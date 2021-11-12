@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
-    <%= live_title_tag assigns[:page_title] || "Home", suffix: " · Lava" %>
+    <%= live_title_tag "Home", suffix: " · Lava" %>
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
@@ -14,11 +14,14 @@
       <section class="container">
         <nav>
           <ul>
-            <li><%= link "Home", to: "/" %></li>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li class="float-right"><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
+            <li><%= link "Events", to: "/events" %></li>
+            <%= for event <- Lava.Events.get_parents(assigns[:event], []) do %>
+            <li class="m-0 p-0">/</li>
+            <li><%= link "#{LavaWeb.EventsView.type(event.type)} #{event.id}", to: Routes.events_path(@conn, :show, event.id) %></li>
             <% end %>
-            <li class="float-right"><%= link "Events Explorer", to: Routes.events_path(@conn, :index) %></li>
+            <li class="m-0 p-0">/</li>
+            <li><%= link "New", to: Routes.events_path(@conn, :new, event_id: assigns[:event]) %></li>
+            <li class="float-right"><%= link "Return to Main App", to: "/" %></li>
           </ul>
         </nav>
       </section>

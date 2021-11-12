@@ -4,9 +4,6 @@ defmodule LavaWeb.EventsController do
   alias Lava.Events.Event
   alias Lava.Entities.Incident
 
-  plug :set_page_title
-  defp set_page_title(conn, _), do: assign(conn, :page_title, "Events Explorer")
-
   def index(conn, _params) do
     render(conn, "index.html", events: Events.source_events)
   end
@@ -51,16 +48,4 @@ defmodule LavaWeb.EventsController do
            }
          }
        ), do: String.to_existing_atom("Elixir.Lava.#{type}")
-
-  #  def index(conn) do
-  #
-  #  end
-  #
-  #  def show(conn, %{"id" => id}) do
-  #
-  #  end
-  #
-  #  def create(conn, params) do
-  #
-  #  end
 end
