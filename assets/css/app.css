@@ -15,15 +15,15 @@ nav li {
 }
 nav li a {
   padding: 10px;
-  border: 1px solid black;
   border-radius: 5px;
+  @apply border border-gray-400;
 }
 .container {
   margin: auto;
 }
 
 .inner-content {
-  margin: 20px 5px;
+  margin: 20px 0;
 }
 
 h1 {
