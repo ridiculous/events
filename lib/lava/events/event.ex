@@ -11,6 +11,7 @@ defmodule Lava.Events.Event do
     field :value, :string
     timestamps()
 
+    belongs_to :timeline, Lava.Events.Timeline
     belongs_to :event, Lava.Events.Event
     belongs_to :source_event, Lava.Events.Event
     has_many :events, Lava.Events.Event
@@ -20,6 +21,6 @@ defmodule Lava.Events.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:name, :value, :created_by, :updated_by])
+    |> cast(attrs, [:name, :value, :created_by, :updated_by, :timeline_id])
   end
 end

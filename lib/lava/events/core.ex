@@ -74,7 +74,7 @@ defmodule Lava.Events.Core do
         for {name, value} <- attrs do
           {:ok, _} = create_event(
             Attr,
-            %{name: "#{name}", value: "#{value}", updated_by: parent.updated_by, created_by: parent.created_by},
+            %{name: "#{name}", value: "#{value}", updated_by: parent.updated_by, created_by: parent.created_by, timeline_id: parent.timeline_id},
             parent
           )
         end

@@ -1,6 +1,18 @@
 <div class="first-item">
 <%= link to: Routes.events_path(@conn, :show, @event.id) do %>
-<%= render "event.html", %{event: @event} %>
+<div class="event-bubble">
+<span class="event-title"><%= "#{LavaWeb.EventsView.type(@event.type)} #{@event.id}" %></span>
+<%= if @event.name do %>
+<span class="event-detail">[<%= "#{@event.name}: \"#{@event.value}\"" %>]</span>
+<% end %>
+<div>
+Timeline <%= @event.timeline_id %>
+Created by <%= @event.created_by %>
+</div>
+<div>
+Updated <%= Calendar.strftime(@event.updated_at, "%A at %I:%M %p") %>
+</div>
+</div>
 <% end %>
 </div>
 <%= for event <- @events do %>
