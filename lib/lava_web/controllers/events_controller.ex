@@ -4,6 +4,9 @@ defmodule LavaWeb.EventsController do
   alias Lava.Events.Event
   alias Lava.Entities.Incident
 
+  plug :set_page_title
+  defp set_page_title(conn, _), do: assign(conn, :page_title, "Events Explorer")
+
   def index(conn, _params) do
     render(conn, "index.html", events: Events.source_events)
   end
