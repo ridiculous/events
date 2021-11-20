@@ -1,11 +1,11 @@
 <h1>Incidents</h1>
 <div class="">
 <%= for event <- @events do %>
-<div class="event-bubble">
-<span class="event-title"><%= "Incident #{event.id}" %></span>
-<%= if event.name do %>
-<span class="event-detail">[<%= "Name: \"#{event.value}\"" %>]</span>
-<% end %>
-</div>
+    <div class="event-bubble">
+    <span class="event-title"><%= "Incident #{event.id}" %></span>
+    <%= if event.name do %>
+        <span class="event-detail">[<%= "Name: \"#{event.value}\"" %>]</span>
+    <% end %>
+    </div>
 <% end %>
 </div>

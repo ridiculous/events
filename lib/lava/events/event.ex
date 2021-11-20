@@ -21,6 +21,7 @@ defmodule Lava.Events.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:name, :value, :created_by, :updated_by, :timeline_id])
+    |> cast(attrs, [:type, :name, :value, :created_by, :updated_by, :timeline_id])
+    |> validate_required([:type])
   end
 end

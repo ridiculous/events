@@ -12,7 +12,7 @@ defmodule Lava.Events.Core do
   and saved as nested events.
   """
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       import Ecto.Query, warn: false
       alias Lava.Repo
       alias Lava.Events.Event
@@ -37,6 +37,7 @@ defmodule Lava.Events.Core do
 
       # Protected.
 
+      defp params_for_type("", params), do: %{}
       defp params_for_type(type, params) do
         keys = Map.keys(struct(type))
                |> List.delete(:__struct__)

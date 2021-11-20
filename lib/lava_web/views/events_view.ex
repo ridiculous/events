@@ -1,5 +1,6 @@
 defmodule LavaWeb.EventsView do
   use LavaWeb, :view
+  alias Lava.Events
 
   @types [
     Lava.Entities.Incident,
@@ -11,11 +12,15 @@ defmodule LavaWeb.EventsView do
 
   def type(t) do
     String.split(t, ".")
-    |> Enum.drop(2)
+    |> Enum.take(-2)
     |> Enum.join(".")
   end
 
   def types do
     Enum.map(@types, fn t -> type("#{t}") end)
+  end
+
+  def top_level_events do
+    Events.source_events |> Enum.map(fn event -> {"#{type(event.type)} #{event.id}", event.id} end)
   end
 end
