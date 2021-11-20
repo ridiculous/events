@@ -66,7 +66,7 @@ defmodule Lava.Events.Core do
       end
 
       defp build_event(type, attrs) do
-        %Event{type: "#{type}"}
+        %Event{type: "#{type}", uuid: Ecto.UUID.generate()}
         |> Event.changeset(attrs)
       end
 

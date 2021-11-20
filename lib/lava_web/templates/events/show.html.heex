@@ -1,4 +1,5 @@
 <h1>Event Show</h1>
+<div class="m-2 float-right"><span class="code-snip">Timeline One</span></div>
 <div class="first-item">
 <%= link to: Routes.events_path(@conn, :show, @event.id) do %>
 <div class="event-bubble">
@@ -7,8 +8,7 @@
 <span class="event-detail">[<%= "#{@event.name}: \"#{@event.value}\"" %>]</span>
 <% end %>
 <div>
-Timeline <%= @event.timeline_id %>
-Created by <%= @event.created_by %>
+Created by user ID <%= @event.created_by %>
 </div>
 <div>
 Updated <%= Calendar.strftime(@event.updated_at, "%A at %I:%M %p") %>
@@ -17,7 +17,10 @@ Updated <%= Calendar.strftime(@event.updated_at, "%A at %I:%M %p") %>
 <% end %>
 </div>
 <%= if @event.event do %>
-    <span title="Linked">-></span> <%= render "event.html", Map.put(assigns, :event, @event.event) %>
+    <span title="Linked">-></span>
+        <%= link to: Routes.events_path(@conn, :show, @event.event) do %>
+            <%= render "event.html", Map.put(assigns, :event, @event.event) %>
+        <% end %>
 <% end %>
 <div>
 <%= for event <- @events do %>

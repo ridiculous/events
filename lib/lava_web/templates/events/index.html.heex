@@ -1,5 +1,14 @@
-<h1>Top Level Events</h1>
+<div class="text-lg mt-10">
+<p class="m-3">Welcome to <span class="code-snip">Timeline One</span> where everything is an <span class="code-snip">Event</span></p>
+<p class="m-3">This is an evented system explorer, for a component written in Elixir.</p>
+<p class="m-3">The <span class="code-snip">Event.type</span> serves as an identifier <b>and</b> the schema, providing consistent access and structure. This also serves as an integration point for other components, which can be notified when a certain event is created.</p>
+<p class="m-3">At it’s core, it’s a key/value record. At the edges it’s capturing meta data: both user defined and system provided (eg. current user and timestamps).</p>
+<p class="m-3">The events can be composed to represent most data, and will end up forming a tree-like structure, like a <i>doubly-linked list</i>.</p>
+<p class="m-3 p-5 border border-gray-300 rounded">Each event has its own lifecycle, allowing for precise change tracking.</p>
+</div>
 
+<h1 class="mt-10">Top Level Events (no timeline)</h1>
+<p class="m-3 mt-5">Create a new event to get started, or click on one of the <span class="event-bubble micro">event bubbles</span> below.</p>
 <div class="">
 <%= for event <- @events do %>
 <%= link to: Routes.events_path(@conn, :show, event.id) do %>

@@ -9,6 +9,7 @@ defmodule Lava.Events.Event do
     field :created_by, :integer
     field :name, :string
     field :value, :string
+    field :uuid, :string
     timestamps()
 
     belongs_to :timeline, Lava.Events.Timeline
