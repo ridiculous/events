@@ -18,7 +18,7 @@
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li class="float-right"><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
-            <li class="float-right"><%= link "Events Explorer", to: Routes.events_path(@conn, :index) %></li>
+            <li class="float-right"><%= link "Event Explorer", to: Routes.events_path(@conn, :index) %></li>
           </ul>
         </nav>
       </section>

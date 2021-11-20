@@ -1,0 +1,13 @@
+<h1 class="mt-10">Showing all events for Timeline <%= @timeline.name %></h1>
+<div class="grid grid-cols-1">
+<%= for event <- @events do %>
+<%= link to: Routes.events_path(@conn, :show, event.id) do %>
+   <div class="event-bubble">
+       <span class="event-title"><%= "#{LavaWeb.EventsView.type(event.type)} #{event.id}" %></span>
+       <%= if event.name do %>
+        <span class="event-detail">[<%= "#{event.name}: \"#{event.value}\"" %>]</span>
+       <% end %>
+   </div>
+<% end %>
+<% end %>
+</div>

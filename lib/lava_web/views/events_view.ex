@@ -3,10 +3,21 @@ defmodule LavaWeb.EventsView do
   alias Lava.Events
 
   @types [
-    Lava.Entities.Incident,
     Lava.Entities.Person,
+    Lava.Entities.Address,
+    Lava.Entities.Phone,
+    Lava.Activities.StartIncidentReport,
     Lava.Activities.AddAllegedVictim,
+    Lava.Activities.AddAllegedPerpetrator,
+    Lava.Activities.AddCollateralContact,
+    Lava.Activities.AddComplainant,
     Lava.Activities.OutgoingCall,
+    Lava.Activities.IncomingCall,
+    Lava.Activities.AddAbuseIndicators,
+    Lava.Activities.AddAddress,
+    Lava.Activities.AddNote,
+    Lava.Activities.AddHomeConcern,
+    Lava.Activities.AddDisposition,
     Lava.Events.Attr
   ]
 

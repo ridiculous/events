@@ -1,12 +1,14 @@
 defmodule LavaWeb.EventsController do
   use LavaWeb, :controller
+  alias Lava.Repo
   alias Lava.Events
   alias Lava.Events.Event
+  alias Lava.Events.Timeline
   alias Lava.Entities.Incident
   alias LavaWeb.EventsView
 
   def index(conn, _params) do
-    render(conn, "index.html", events: Events.source_events)
+    render(conn, "index.html", events: Events.source_events, timelines: Repo.all(Timeline))
   end
 
   def new(conn, params) do
@@ -57,7 +59,7 @@ defmodule LavaWeb.EventsController do
 
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-            |> Lava.Repo.preload([:source_events, :event])
+            |> Repo.preload([:source_events, :event])
     render(conn, "show.html", event: event, events: event.source_events)
   end
 

@@ -5,10 +5,21 @@
 @tailwind utilities;
 
 body {
+  font-size: 22px;
   padding: 50px;
   background-image: url("/images/ebv-wood.jpg");
   background-repeat: repeat;
   @apply text-blue-100;
+  line-height: 35px;
+}
+
+input, select {
+  background: none;
+  @apply text-blue-100;
+}
+
+option {
+  @apply text-gray-900;
 }
 
 nav li {
@@ -29,8 +40,8 @@ nav li a {
 }
 
 h1 {
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 35px;
+  line-height: 50px;
   margin: 10px;
 }
 
@@ -39,7 +50,7 @@ h1 {
 }
 
 .event-bubble {
-  margin: 5px;
+  margin: 10px;
   padding: 10px;
   border-radius: 5px;
   display: inline-block;
@@ -47,7 +58,7 @@ h1 {
 }
 
 .event-bubble.micro {
-  margin: 0;
+  margin: 2px;
   padding: 5px 10px;
 }
 
@@ -81,6 +92,7 @@ select {
   padding: 5px;
   margin: 0 5px;
   border-radius: 5px;
+  @apply border border-blue-200;
 }
 
 .fields {
@@ -88,15 +100,16 @@ select {
 }
 /* Alerts and form errors used by phx.new */
 .alert {
+  margin: 5px;
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   border: 1px solid transparent;
   border-radius: 4px;
 }
 .alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
+  color: #60e5ff;
+  background-color: #000;
+  border-color: #60e5ff;
 }
 .alert-warning {
   color: #8a6d3b;
@@ -104,9 +117,9 @@ select {
   border-color: #faebcc;
 }
 .alert-danger {
-  color: #a94442;
-  background-color: #f2dede;
-  border-color: #ebccd1;
+  color: #ff1814;
+  background-color: #260505;
+  border-color: #ff1814;
 }
 .alert p {
   margin-bottom: 0;

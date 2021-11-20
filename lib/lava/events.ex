@@ -1,10 +1,14 @@
 defmodule Lava.Events do
   use Lava.Events.Core
 
+  def by_timeline(timeline) do
+    Repo.all(from e in Event, where: e.timeline_id == ^timeline.id, order_by: e.inserted_at)
+  end
+
   def get_event!(id), do: Repo.get!(Event, id)
 
   def source_events do
-    Repo.all(from c in Event, where: is_nil(c.source_event_id), order_by: c.id)
+    Repo.all(from e in Event, where: is_nil(e.source_event_id), order_by: e.id)
   end
 
   def change_event(%Event{} = event, attrs \\ %{}) do

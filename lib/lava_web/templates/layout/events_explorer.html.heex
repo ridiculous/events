@@ -15,6 +15,10 @@
         <nav>
           <ul>
             <li><%= link "Events", to: "/events" %></li>
+            <%= if assigns[:timeline] do %>
+                <li class="m-0 p-0">/</li>
+                <li><%= link assigns[:timeline].name, to: Routes.timelines_path(@conn, :show, assigns[:timeline].id) %></li>
+            <% end %>
             <%= for event <- Lava.Events.get_parents(assigns[:event], []) do %>
             <li class="m-0 p-0">/</li>
             <li><%= link "#{LavaWeb.EventsView.type(event.type)} #{event.id}", to: Routes.events_path(@conn, :show, event.id) %></li>

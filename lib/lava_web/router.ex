@@ -33,6 +33,7 @@ defmodule LavaWeb.Router do
     scope "/events" do
       pipe_through :events_explorer
       resources "/", EventsController
+      resources "/timelines", TimelinesController
     end
     get "/", IncidentsController, :index
   end
