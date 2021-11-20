@@ -1,3 +1,4 @@
+<h1>Event Show</h1>
 <div class="first-item">
 <%= link to: Routes.events_path(@conn, :show, @event.id) do %>
 <div class="event-bubble">
@@ -15,8 +16,14 @@ Updated <%= Calendar.strftime(@event.updated_at, "%A at %I:%M %p") %>
 </div>
 <% end %>
 </div>
+<%= if @event.event do %>
+    <span title="Linked">-></span> <%= render "event.html", Map.put(assigns, :event, @event.event) %>
+<% end %>
+<div>
 <%= for event <- @events do %>
-<%= link to: Routes.events_path(@conn, :show, event.id) do %>
-<%= render "event.html", Map.put(assigns, :event, event) %>
+    <%= link to: Routes.events_path(@conn, :show, event.id) do %>
+        <%= render "event.html", Map.put(assigns, :event, event) %>
+    <% end %>
 <% end %>
-<% end %>
+</div>
+

@@ -28,8 +28,17 @@ defmodule LavaWeb.EventsController do
       %{"source_event_id" => id} -> Events.get_event!(id)
       _ -> nil
     end
+    related_event = case event_params do
+      %{"event_id" => ""} -> nil
+      %{"event_id" => id} -> Events.get_event!(id)
+      _ -> nil
+    end
     event = if source_event do
-      Events.create(parse_type(event_params), event_params, source_event)
+      if related_event do
+        Events.create(parse_type(event_params), event_params, source_event, related_event)
+      else
+        Events.create(parse_type(event_params), event_params, source_event)
+      end
     else
       Events.create(parse_type(event_params), event_params)
     end
@@ -48,7 +57,7 @@ defmodule LavaWeb.EventsController do
 
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-            |> Lava.Repo.preload(:source_events)
+            |> Lava.Repo.preload([:source_events, :event])
     render(conn, "show.html", event: event, events: event.source_events)
   end
 
