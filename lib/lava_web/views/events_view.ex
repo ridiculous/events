@@ -6,6 +6,7 @@ defmodule LavaWeb.EventsView do
     Lava.Entities.Person,
     Lava.Entities.Address,
     Lava.Entities.Phone,
+    Lava.Entities.HomeConcern,
     Lava.Activities.StartIncidentReport,
     Lava.Activities.AddAllegedVictim,
     Lava.Activities.AddAllegedPerpetrator,
