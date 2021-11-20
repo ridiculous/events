@@ -1,28 +1,31 @@
 <div class="mt-10">
-<p class="m-3">Welcome to the <span class="code-snip">Events Explorer</span>, an evented-system component, where everything is an <span class="code-snip">Event</span></p>
-<p class="m-3 p-5 border border-gray-300 rounded">Events are key/value objects that can be nested and linked together</p>
+    <p class="m-3">Welcome to the <span class="code-snip">Events Explorer</span>, an evented-system component, where
+        everything is an <span class="code-snip">Event</span></p>
+    <p class="m-3 p-5 border border-gray-300 rounded">Events are key/value objects that can be nested and linked
+        together</p>
 </div>
 <div class="grid grid-cols-2 gap-4">
-<div>
-<h1 class="mt-10">Timelines</h1>
-<p class="m-3 mt-5">Most events exist on a single <span class="code-snip">Timeline</span></p>
-<div class="">
-<%= for timeline <- @timelines do %>
-    <%= link to: Routes.timelines_path(@conn, :show, timeline.id) do %>
-        <div class="event-bubble"><span class="event-title"><%= timeline.name %></span></div>
-    <% end %>
-<% end %>
-</div>
-</div>
-<div>
-<h1 class="mt-10">Top Level Events</h1>
-<p class="m-3 mt-5"><span class="code-snip">Global Events</span> exist across timelines</p>
-<div class="">
-<%= for event <- @events do %>
-<%= link to: Routes.events_path(@conn, :show, event.id) do %>
-<%= render "event.html", Map.put(assigns, :event, event) %>
-<% end %>
-<% end %>
-</div>
-</div>
+    <div>
+        <h1 class="mt-10">Timelines</h1>
+        <p class="m-3 mt-5">Most events exist on a single <span class="code-snip">Timeline</span></p>
+        <div class="m-3">
+            <%= for timeline <- @timelines do %>
+                <%= link to: Routes.timelines_path(@conn, :show, timeline.id) do %>
+                    <div class="event-bubble"><span class="event-title"><%= timeline.name %></span></div>
+                <% end %>
+            <% end %>
+            <%= link "New Timeline", to: Routes.timelines_path(@conn, :new), class: "link-bubble" %>
+        </div>
+    </div>
+    <div>
+        <h1 class="mt-10">Top Level Events</h1>
+        <p class="m-3 mt-5"><span class="code-snip">Global Events</span> exist across timelines</p>
+        <div class="">
+            <%= for event <- @events do %>
+            <%= link to: Routes.events_path(@conn, :show, event.id) do %>
+            <%= render "event.html", Map.put(assigns, :event, event) %>
+            <% end %>
+            <% end %>
+        </div>
+    </div>
 </div>

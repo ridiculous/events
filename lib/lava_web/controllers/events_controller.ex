@@ -49,10 +49,7 @@ defmodule LavaWeb.EventsController do
                   |> put_flash(:info, "Event #{event.id} created successfully.")
                   |> redirect(to: "/events/#{event_params["source_event_id"]}")
       {:error, %Ecto.Changeset{} = changeset} -> conn
-                                                 |> put_flash(
-                                                      :error,
-                                                      "Poop, it failed. #{inspect(changeset.errors)}"
-                                                    )
+                                                 |> put_flash(:error,"Poop, it failed. #{inspect(changeset.errors)}")
                                                  |> render("new.html", changeset: changeset, event: source_event)
     end
   end

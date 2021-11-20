@@ -3,8 +3,8 @@ defmodule Lava.Events.Timeline do
   import Ecto.Changeset
 
   schema "timelines" do
-    field :created_by, :string
     field :name, :string
+    field :created_by, :string
 
     timestamps()
   end
@@ -12,6 +12,7 @@ defmodule Lava.Events.Timeline do
   @doc false
   def changeset(timeline, attrs) do
     timeline
-    |> cast(attrs, [:created_by, :name])
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
   end
 end
