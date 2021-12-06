@@ -14,7 +14,7 @@
       <section class="container">
         <nav>
           <ul>
-            <li><%= link "Events", to: "/events" %></li>
+            <li><%= link "Explorer", to: Routes.events_path(@conn, :index) %></li>
             <%= if assigns[:timeline] do %>
                 <li class="m-0 p-0">/</li>
                 <li><%= link assigns[:timeline].name, to: Routes.timelines_path(@conn, :show, assigns[:timeline].id) %></li>
@@ -24,7 +24,11 @@
             <li><%= link "#{LavaWeb.EventsView.type(event.type)} #{event.id}", to: Routes.events_path(@conn, :show, event.id) %></li>
             <% end %>
             <li class="m-0 p-0">/</li>
-            <li><%= link "New", to: Routes.events_path(@conn, :new, event_id: assigns[:event]) %></li>
+            <%= if assigns[:timeline] do %>
+              <li><%= link "New", to: Routes.timelines_events_path(@conn, :new, assigns[:timeline], event_id: assigns[:event]) %></li>
+            <% else %>
+              <li><%= link "New", to: Routes.events_path(@conn, :new, event_id: assigns[:event]) %></li>
+            <% end %>
             <li class="float-right"><%= link "Return to Main App", to: "/" %></li>
           </ul>
         </nav>

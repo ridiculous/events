@@ -4,7 +4,6 @@ defmodule LavaWeb.EventsController do
   alias Lava.Events
   alias Lava.Events.Event
   alias Lava.Events.Timeline
-  alias Lava.Entities.Incident
   alias LavaWeb.EventsView
 
   def index(conn, _params) do
@@ -42,22 +41,27 @@ defmodule LavaWeb.EventsController do
         Events.create(parse_type(event_params), event_params, source_event)
       end
     else
-      Events.create(parse_type(event_params), event_params)
+      if related_event do
+        Events.create(parse_type(event_params), event_params, nil, related_event)
+      else
+        Events.create(parse_type(event_params), event_params)
+      end
     end
     case event do
-      %Event{} -> conn
-                  |> put_flash(:info, "Event #{event.id} created successfully.")
-                  |> redirect(to: "/events/#{event_params["source_event_id"]}")
+      %Event{} ->
+        conn
+        |> put_flash(:info, "Event #{event.id} created successfully.")
+        |> redirect(to: Routes.events_path(conn, :show, source_event || event))
       {:error, %Ecto.Changeset{} = changeset} -> conn
-                                                 |> put_flash(:error,"Poop, it failed. #{inspect(changeset.errors)}")
+                                                 |> put_flash(:error, "Poop, it failed. #{inspect(changeset.errors)}")
                                                  |> render("new.html", changeset: changeset, event: source_event)
     end
   end
 
   def show(conn, %{"id" => id}) do
     event = Events.get_event!(id)
-            |> Repo.preload([:source_events, :event])
-    render(conn, "show.html", event: event, events: event.source_events)
+            |> Repo.preload([:source_events, :event, :timeline])
+    render(conn, "show.html", event: event, events: event.source_events, timeline: event.timeline)
   end
 
   defp parse_type(%{"type" => type}) do

@@ -35,6 +35,12 @@ defmodule Lava.Events.Core do
         |> create_attrs(params_for_type(type, attrs))
       end
 
+      # TODO fixme this is getting hacky lets use a map maybe instead to link these events
+      def create(type, attrs = %{}, source = nil, event = %Event{}) do
+        create_event(type, attrs, source, event)
+        |> create_attrs(params_for_type(type, attrs))
+      end
+
       # Protected.
 
       defp params_for_type("", params), do: %{}
@@ -61,6 +67,13 @@ defmodule Lava.Events.Core do
       defp create_event(type, attrs = %{}, source_event = %Event{}, event = %Event{}) do
         build_event(type, attrs)
         |> Ecto.Changeset.put_assoc(:source_event, source_event)
+        |> Ecto.Changeset.put_assoc(:event, event)
+        |> Repo.insert()
+      end
+
+      # Create and link to reference only
+      defp create_event(type, attrs = %{}, nil, event = %Event{}) do
+        build_event(type, attrs)
         |> Ecto.Changeset.put_assoc(:event, event)
         |> Repo.insert()
       end

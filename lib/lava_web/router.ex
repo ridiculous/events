@@ -20,6 +20,10 @@ defmodule LavaWeb.Router do
     plug :put_root_layout, {LavaWeb.LayoutView, :events_explorer}
   end
 
+  pipeline :timeline do
+    plug :fetch_timeline
+  end
+
   scope "/", LavaWeb do
     pipe_through :browser
     resources "/incidents", IncidentsController
@@ -30,10 +34,13 @@ defmodule LavaWeb.Router do
     get "/cart", CartController, :show
     put "/cart", CartController, :update
     resources "/orders", OrderController, only: [:create, :show]
-    scope "/events" do
+    scope "/explorer" do
       pipe_through :events_explorer
       resources "/", EventsController
-      resources "/timelines", TimelinesController
+      resources "/timelines", TimelinesController do
+        pipe_through :timeline
+        resources "/events", EventsController
+      end
     end
     get "/", IncidentsController, :index
   end
@@ -88,6 +95,12 @@ defmodule LavaWeb.Router do
     else
       {:ok, new_cart} = ShoppingCart.create_cart(conn.assigns.current_uuid)
       assign(conn, :cart, new_cart)
+    end
+  end
+
+  defp fetch_timeline(conn, _opts) do
+    if conn.params["timelines_id"] do
+      assign(conn, :timeline, Lava.Repo.get!(Lava.Events.Timeline, conn.params["timelines_id"]))
     end
   end
 end
