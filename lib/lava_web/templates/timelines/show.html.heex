@@ -1,4 +1,4 @@
-<h1 class="mt-10">Showing all events for Timeline <span class="code-snip"><%= @timeline.name %></span></h1>
+<h1 class="mt-10">Source events for <span class="code-snip"><%= @timeline.name %></span></h1>
 <div class="grid grid-cols-1">
 <%= for event <- @events do %>
 <%= link to: Routes.events_path(@conn, :show, event.id) do %>
